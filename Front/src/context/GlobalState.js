@@ -2,7 +2,7 @@ import React, { createContext, useReducer } from 'react';
 import AppReducer from './AppReducer';
 import axios from 'axios';
 
-const API_URL = 'https://expense-tracker-6g8z.onrender.com/api/v1/transactions';
+const API_URL = 'https://expense-tracker-6g8z.onrender.com';
 
 const initialState = {
   transactions: [],
