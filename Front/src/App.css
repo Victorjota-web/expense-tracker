@@ -149,3 +149,24 @@ input[type='number'] {
 .list li:hover .delete-btn {
   opacity: 1;
 }
+
+
+
+
+@media (max-width: 600px) {
+  .container {
+    width: 90%; 
+  }
+
+  .list li {
+    padding: 8px; 
+    margin: 8px 0; 
+    font-size: 14px;
+  }
+
+  .btn, .delete-btn {
+    font-size: 14px; 
+    padding: 8px; 
+  }
+
+}
