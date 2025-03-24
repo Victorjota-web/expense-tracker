@@ -1,8 +1,7 @@
 import React, { createContext, useReducer } from 'react';
 import AppReducer from './AppReducer';
-import axios from 'axios';
 
-const API_URL = 'https://expense-tracker-6g8z.onrender.com';
+const API_URL = process.env.REACT_APP_API_URL + '/api/transactions';
 
 const initialState = {
   transactions: [],
@@ -10,32 +9,37 @@ const initialState = {
   loading: true
 };
 
+
 export const GlobalContext = createContext(initialState);
+
 
 export const GlobalProvider = ({ children }) => {
   const [state, dispatch] = useReducer(AppReducer, initialState);
 
+
   async function getTransactions() {
     try {
-      const res = await axios.get(API_URL);
+      const res = await fetch(API_URL);
+      const data = await res.json();
 
       dispatch({
         type: 'GET_TRANSACTIONS',
-        payload: res.data?.data || []
+        payload: data || []
       });
     } catch (err) {
-      console.error('Error fetching transactions:', err);
+      console.error('Erro ao buscar transações:', err);
 
       dispatch({
         type: 'TRANSACTION_ERROR',
-        payload: err.response?.data?.error || 'Failed to fetch transactions'
+        payload: 'Falha ao buscar transações'
       });
     }
   }
 
+
   async function deleteTransaction(id) {
     try {
-      await axios.delete(`${API_URL}/${id}`);
+      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
 
       dispatch({
         type: 'DELETE_TRANSACTION',
@@ -44,29 +48,32 @@ export const GlobalProvider = ({ children }) => {
     } catch (err) {
       dispatch({
         type: 'TRANSACTION_ERROR',
-        payload: err.response?.data?.error || 'Failed to delete transaction'
+        payload: 'Falha ao deletar transação'
       });
     }
   }
 
+  
   async function addTransaction(transaction) {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-
     try {
-      const res = await axios.post(API_URL, transaction, config);
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(transaction)
+      });
+
+      const data = await res.json();
 
       dispatch({
         type: 'ADD_TRANSACTION',
-        payload: res.data?.data || {}
+        payload: data || {}
       });
     } catch (err) {
       dispatch({
         type: 'TRANSACTION_ERROR',
-        payload: err.response?.data?.error || 'Failed to add transaction'
+        payload: 'Falha ao adicionar transação'
       });
     }
   }
