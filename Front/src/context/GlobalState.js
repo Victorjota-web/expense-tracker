@@ -2,6 +2,8 @@ import React, { createContext, useReducer } from 'react';
 import AppReducer from './AppReducer';
 import axios from 'axios';
 
+const API_URL = 'https://expense-tracker-6g8z.onrender.com/api/v1/transactions';
+
 const initialState = {
   transactions: [],
   error: null,
@@ -15,25 +17,25 @@ export const GlobalProvider = ({ children }) => {
 
   async function getTransactions() {
     try {
-      const res = await axios.get('/api/v1/transactions');
+      const res = await axios.get(API_URL);
 
       dispatch({
         type: 'GET_TRANSACTIONS',
-        payload: res.data?.data || [] // 🔹 Garante um array vazio caso os dados estejam indefinidos
+        payload: res.data?.data || []
       });
     } catch (err) {
-      console.error('Error fetching transactions:', err); // 🔹 Log de erro para debugging
+      console.error('Error fetching transactions:', err);
 
       dispatch({
         type: 'TRANSACTION_ERROR',
-        payload: err.response?.data?.error || "Failed to fetch transactions"
+        payload: err.response?.data?.error || 'Failed to fetch transactions'
       });
     }
   }
 
   async function deleteTransaction(id) {
     try {
-      await axios.delete(`/api/v1/transactions/${id}`);
+      await axios.delete(`${API_URL}/${id}`);
 
       dispatch({
         type: 'DELETE_TRANSACTION',
@@ -42,7 +44,7 @@ export const GlobalProvider = ({ children }) => {
     } catch (err) {
       dispatch({
         type: 'TRANSACTION_ERROR',
-        payload: err.response?.data?.error || "Failed to delete transaction"
+        payload: err.response?.data?.error || 'Failed to delete transaction'
       });
     }
   }
@@ -55,7 +57,7 @@ export const GlobalProvider = ({ children }) => {
     };
 
     try {
-      const res = await axios.post('/api/v1/transactions', transaction, config);
+      const res = await axios.post(API_URL, transaction, config);
 
       dispatch({
         type: 'ADD_TRANSACTION',
@@ -64,7 +66,7 @@ export const GlobalProvider = ({ children }) => {
     } catch (err) {
       dispatch({
         type: 'TRANSACTION_ERROR',
-        payload: err.response?.data?.error || "Failed to add transaction"
+        payload: err.response?.data?.error || 'Failed to add transaction'
       });
     }
   }
